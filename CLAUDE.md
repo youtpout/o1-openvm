@@ -41,11 +41,23 @@ so the numbers compare like for like.
 | + modular (Fp/Fq) | 24,221,887,063 | 896,055,841,422 | ×1.31 |
 | + Vesta curve | 5,815,088,237 | 220,926,602,404 | ×5.47 |
 | + Pallas curve | 2,249,380,517 | 86,644,291,990 | ×14.15 |
-| **+ checked point construction** | **2,286,997,815** | **88,224,421,019** | **×13.91** |
+| + checked point construction | 2,286,997,815 | 88,224,421,019 | ×13.91 |
+| **+ VK validation, no heap allocs** | **2,230,979,102** | **85,934,163,225** | **×14.26** |
 
-The last row is the shipped configuration. Validating the curve equation on every
-point costs **+1.67% instructions / +1.82% cells** — trivial, and not a tradeoff
-worth having a conversation about.
+The last row is the shipped configuration. Note the direction of the final row:
+adding curve validation on the 28 VK commitments *and* dropping the heap
+allocations in the limb conversion nets **−2.45% instructions / −2.60% cells**.
+Security was added at negative cost. `to_bytes_le()` allocated a `Vec` per
+coordinate — ~130k allocations per 2^16 MSM, on a path where the allocator is
+plain RISC-V and every byte crosses the memory chip. Read the `[u64]` limbs via
+`BigInteger: AsRef<[u64]>` instead (`.0` does not compile: `F::BigInt` is an
+associated type).
+
+Also worth recording: the identity is safe to pass into
+`openvm_ecc_guest::msm`. The `sw_declare!` expansion implements the full group
+law in Rust — identity on either side, `P = Q` via `double`, `P = -Q` to identity
+— and only delegates the non-degenerate cases to the `add_ne`/`double`
+intrinsics. The naming (`sw_add_ne_extern_func`) is the giveaway.
 
 SP1 (riscv64, `sys_bigint`) costs 4,378,867,074 cycles for the same work, so
 OpenVM with both curve chips lands ~1.95× *better* — on a 32-bit core.

@@ -630,6 +630,14 @@ dependencies = [
 [[package]]
 name = "groupmap"
 version = "0.7.0"
+dependencies = [
+ "ark-ec",
+ "ark-ff",
+]
+
+[[package]]
+name = "groupmap"
+version = "0.7.0"
 source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#e0a135240e342483d461e7319b4b7cb32425148f"
 dependencies = [
  "ark-ec",
@@ -778,17 +786,17 @@ dependencies = [
  "ark-poly",
  "ark-serialize",
  "blake2",
- "groupmap",
+ "groupmap 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
  "hex",
  "internal-tracing",
  "itertools 0.12.1",
  "log",
- "mina-curves",
- "mina-poseidon",
+ "mina-curves 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "mina-poseidon 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
  "num-bigint",
  "num-integer",
- "o1-utils",
- "poly-commitment",
+ "o1-utils 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "poly-commitment 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
  "rand",
  "rand_core",
  "rayon",
@@ -837,6 +845,17 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 [[package]]
 name = "mina-curves"
 version = "0.7.0"
+dependencies = [
+ "ark-bn254",
+ "ark-ec",
+ "ark-ff",
+ "ark-std",
+ "num-bigint",
+]
+
+[[package]]
+name = "mina-curves"
+version = "0.7.0"
 source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#e0a135240e342483d461e7319b4b7cb32425148f"
 dependencies = [
  "ark-bn254",
@@ -854,14 +873,30 @@ dependencies = [
 [[package]]
 name = "mina-poseidon"
 version = "0.7.0"
+dependencies = [
+ "ark-ec",
+ "ark-ff",
+ "ark-poly",
+ "ark-serialize",
+ "mina-curves 0.7.0",
+ "o1-utils 0.7.0",
+ "rand",
+ "rayon",
+ "serde",
+ "serde_with",
+]
+
+[[package]]
+name = "mina-poseidon"
+version = "0.7.0"
 source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#e0a135240e342483d461e7319b4b7cb32425148f"
 dependencies = [
  "ark-ec",
  "ark-ff",
  "ark-poly",
  "ark-serialize",
- "mina-curves",
- "o1-utils",
+ "mina-curves 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "o1-utils 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
  "rand",
  "rayon",
  "serde",
@@ -936,14 +971,37 @@ name = "o1-openvm-verifier"
 version = "0.1.0"
 dependencies = [
  "ark-ff",
- "mina-curves",
+ "mina-curves 0.7.0",
  "openvm",
  "openvm-algebra-guest",
  "openvm-ecc-guest",
  "openvm-keccak256",
  "pickles-verifier",
- "poly-commitment",
+ "poly-commitment 0.7.0",
  "postcard",
+]
+
+[[package]]
+name = "o1-utils"
+version = "0.7.0"
+dependencies = [
+ "ark-ff",
+ "ark-poly",
+ "ark-serialize",
+ "bcs",
+ "hex",
+ "num-bigint",
+ "num-integer",
+ "rand",
+ "rayon",
+ "rmp-serde",
+ "rustversion",
+ "serde",
+ "serde_json",
+ "serde_with",
+ "sha2",
+ "spin",
+ "thiserror 2.0.19",
 ]
 
 [[package]]
@@ -1120,7 +1178,6 @@ checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 [[package]]
 name = "pickles-verifier"
 version = "0.1.0"
-source = "git+https://github.com/youtpout/o1js-to-zkvm?branch=perf%2Fbatched-accumulator#1269196aceffc89e1a27bbab6885131df10ae93d"
 dependencies = [
  "ark-ec",
  "ark-ff",
@@ -1128,15 +1185,15 @@ dependencies = [
  "ark-serialize",
  "blake2",
  "bytemuck",
- "groupmap",
+ "groupmap 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
  "hex",
  "kimchi",
- "mina-curves",
- "mina-poseidon",
- "o1-utils",
+ "mina-curves 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "mina-poseidon 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "o1-utils 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
  "openvm-algebra-guest",
  "openvm-ecc-guest",
- "poly-commitment",
+ "poly-commitment 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
  "postcard",
  "rand_chacha",
  "rand_core",
@@ -1154,6 +1211,33 @@ checksum = "a89322df9ebe1c1578d689c92318e070967d1042b512afbe49518723f4e6d5cd"
 [[package]]
 name = "poly-commitment"
 version = "0.7.0"
+dependencies = [
+ "ark-ec",
+ "ark-ff",
+ "ark-poly",
+ "ark-serialize",
+ "blake2",
+ "groupmap 0.7.0",
+ "hashbrown 0.15.5",
+ "hex",
+ "itertools 0.12.1",
+ "mina-curves 0.7.0",
+ "mina-poseidon 0.7.0",
+ "num-bigint",
+ "o1-utils 0.7.0",
+ "rand",
+ "rand_core",
+ "rayon",
+ "rmp-serde",
+ "serde",
+ "serde_with",
+ "thiserror 2.0.19",
+ "zeroize",
+]
+
+[[package]]
+name = "poly-commitment"
+version = "0.7.0"
 source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#e0a135240e342483d461e7319b4b7cb32425148f"
 dependencies = [
  "ark-ec",
@@ -1161,14 +1245,14 @@ dependencies = [
  "ark-poly",
  "ark-serialize",
  "blake2",
- "groupmap",
+ "groupmap 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
  "hashbrown 0.15.5",
  "hex",
  "itertools 0.12.1",
- "mina-curves",
- "mina-poseidon",
+ "mina-curves 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "mina-poseidon 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
  "num-bigint",
- "o1-utils",
+ "o1-utils 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
  "openvm-algebra-guest",
  "openvm-ecc-guest",
  "rand",
