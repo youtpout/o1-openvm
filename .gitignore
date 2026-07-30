@@ -3,3 +3,4 @@
 *.app.proof
 input.json
 openvm/
+.DS_Store
