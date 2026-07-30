@@ -5,7 +5,10 @@ edition = "2021"
 
 [dependencies]
 # std build: fixture parsing + host-side assembly of the guest's input.
-pickles-verifier = { path = "../../../o1js-to-zkvm/crates/pickles-verifier" }
+pickles-verifier = { git = "https://github.com/youtpout/o1js-to-zkvm", branch = "perf/batched-accumulator" }
 postcard = { version = "1", features = ["alloc"] }
 hex = "0.4"
+ark-ec = "0.5"
+ark-ff = "0.5"
+mina-curves = { git = "https://github.com/youtpout/proof-systems", branch = "openvm-on-sp1-on-master" }
 serde_json = "1"

@@ -171,6 +171,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
 
 [[package]]
+name = "base16ct"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4c7f02d4ea65f2c1853089ffd8d2787bdbc63de2f0d29dedbcf8ccdfa0ccd4cf"
+
+[[package]]
 name = "base64"
 version = "0.22.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -289,6 +295,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "const-oid"
+version = "0.9.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c2459377285ad874054d797f3ccebf984978aa39129f6eafde5cdc8315b612f8"
+
+[[package]]
 name = "core-foundation-sys"
 version = "0.8.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -335,6 +347,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "460fbee9c2c2f33933d720630a6a0bac33ba7053db5344fac858d4b8952d77d5"
 
 [[package]]
+name = "crypto-bigint"
+version = "0.5.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0dc92fb57ca44df6db8059111ab3af99a63d5d0f8375d9972e319a379c6bab76"
+dependencies = [
+ "generic-array",
+ "rand_core",
+ "subtle",
+ "zeroize",
+]
+
+[[package]]
 name = "crypto-common"
 version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -379,6 +403,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "der"
+version = "0.7.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e7c1832837b905bbfb5101e07cc24c8deddf52f93225eee6ead5f4d63d53ddcb"
+dependencies = [
+ "const-oid",
+ "zeroize",
+]
+
+[[package]]
 name = "deranged"
 version = "0.5.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -394,6 +428,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292"
 dependencies = [
  "block-buffer",
+ "const-oid",
  "crypto-common",
  "subtle",
 ]
@@ -403,6 +438,17 @@ name = "dyn-clone"
 version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d0881ea181b1df73ff77ffaaf9c7544ecc11e82fba9b5f27b262a3c73a332555"
+
+[[package]]
+name = "ecdsa"
+version = "0.16.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ee27f32b5c5292967d2d4a9d7f1e0b0aed2c15daded5a60300e4abb9d8020bca"
+dependencies = [
+ "digest",
+ "elliptic-curve",
+ "signature",
+]
 
 [[package]]
 name = "educe"
@@ -421,6 +467,24 @@ name = "either"
 version = "1.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9e5e8f6c15a24b9a3ee5efec809ccd006d3b30e8b3bb63c39af737c7f87daa1d"
+
+[[package]]
+name = "elliptic-curve"
+version = "0.13.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b5e6043086bf7973472e0c7dff2142ea0b680d30e18d9cc40f267efbf222bd47"
+dependencies = [
+ "base16ct",
+ "crypto-bigint",
+ "digest",
+ "ff",
+ "generic-array",
+ "group",
+ "rand_core",
+ "sec1",
+ "subtle",
+ "zeroize",
+]
 
 [[package]]
 name = "embedded-io"
@@ -459,6 +523,16 @@ name = "equivalent"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
+
+[[package]]
+name = "ff"
+version = "0.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c0b50bfb653653f9ca9095b427bed08ab8d75a137839d9ad64eb11810d5b6393"
+dependencies = [
+ "rand_core",
+ "subtle",
+]
 
 [[package]]
 name = "find-msvc-tools"
@@ -516,6 +590,7 @@ checksum = "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a"
 dependencies = [
  "typenum",
  "version_check",
+ "zeroize",
 ]
 
 [[package]]
@@ -542,17 +617,19 @@ dependencies = [
 ]
 
 [[package]]
-name = "groupmap"
-version = "0.7.0"
+name = "group"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f0f9ef7462f7c099f518d754361858f86d8a07af53ba9af0fe635bbccb151a63"
 dependencies = [
- "ark-ec",
- "ark-ff",
+ "ff",
+ "rand_core",
+ "subtle",
 ]
 
 [[package]]
 name = "groupmap"
 version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#788cb68f7cfd85bf443bc144fd1879ce88a581d6"
 dependencies = [
  "ark-ec",
  "ark-ff",
@@ -653,7 +730,6 @@ dependencies = [
 [[package]]
 name = "internal-tracing"
 version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#788cb68f7cfd85bf443bc144fd1879ce88a581d6"
 
 [[package]]
 name = "itertools"
@@ -693,24 +769,23 @@ dependencies = [
 [[package]]
 name = "kimchi"
 version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#788cb68f7cfd85bf443bc144fd1879ce88a581d6"
 dependencies = [
  "ark-ec",
  "ark-ff",
  "ark-poly",
  "ark-serialize",
  "blake2",
- "groupmap 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "groupmap",
  "hex",
  "internal-tracing",
  "itertools 0.12.1",
  "log",
- "mina-curves 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
- "mina-poseidon 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "mina-curves",
+ "mina-poseidon",
  "num-bigint",
  "num-integer",
- "o1-utils 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
- "poly-commitment 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "o1-utils",
+ "poly-commitment",
  "rand",
  "rand_core",
  "rayon",
@@ -765,48 +840,23 @@ dependencies = [
  "ark-ff",
  "ark-std",
  "num-bigint",
-]
-
-[[package]]
-name = "mina-curves"
-version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#788cb68f7cfd85bf443bc144fd1879ce88a581d6"
-dependencies = [
- "ark-bn254",
- "ark-ec",
- "ark-ff",
- "ark-std",
- "num-bigint",
+ "openvm",
  "openvm-algebra-guest",
-]
-
-[[package]]
-name = "mina-poseidon"
-version = "0.7.0"
-dependencies = [
- "ark-ec",
- "ark-ff",
- "ark-poly",
- "ark-serialize",
- "mina-curves 0.7.0",
- "o1-utils 0.7.0",
- "rand",
- "rayon",
+ "openvm-ecc-guest",
+ "openvm-ecc-sw-macros",
  "serde",
- "serde_with",
 ]
 
 [[package]]
 name = "mina-poseidon"
 version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#788cb68f7cfd85bf443bc144fd1879ce88a581d6"
 dependencies = [
  "ark-ec",
  "ark-ff",
  "ark-poly",
  "ark-serialize",
- "mina-curves 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
- "o1-utils 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "mina-curves",
+ "o1-utils",
  "rand",
  "rayon",
  "serde",
@@ -881,41 +931,19 @@ name = "o1-openvm-verifier"
 version = "0.1.0"
 dependencies = [
  "ark-ff",
- "mina-curves 0.7.0",
+ "mina-curves",
  "openvm",
+ "openvm-algebra-guest",
+ "openvm-ecc-guest",
  "openvm-keccak256",
  "pickles-verifier",
- "poly-commitment 0.7.0",
+ "poly-commitment",
  "postcard",
 ]
 
 [[package]]
 name = "o1-utils"
 version = "0.7.0"
-dependencies = [
- "ark-ff",
- "ark-poly",
- "ark-serialize",
- "bcs",
- "hex",
- "num-bigint",
- "num-integer",
- "rand",
- "rayon",
- "rmp-serde",
- "rustversion",
- "serde",
- "serde_json",
- "serde_with",
- "sha2",
- "spin",
- "thiserror 2.0.19",
-]
-
-[[package]]
-name = "o1-utils"
-version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#788cb68f7cfd85bf443bc144fd1879ce88a581d6"
 dependencies = [
  "ark-ff",
  "ark-poly",
@@ -1005,6 +1033,34 @@ dependencies = [
 ]
 
 [[package]]
+name = "openvm-ecc-guest"
+version = "2.0.1"
+source = "git+https://github.com/openvm-org/openvm.git?tag=v2.0.1#b820b25baab6c5d9b055f64e0286b6b1058e707c"
+dependencies = [
+ "ecdsa",
+ "elliptic-curve",
+ "group",
+ "once_cell",
+ "openvm",
+ "openvm-algebra-guest",
+ "openvm-custom-insn",
+ "openvm-ecc-sw-macros",
+ "openvm-rv32im-guest",
+ "serde",
+ "strum_macros",
+]
+
+[[package]]
+name = "openvm-ecc-sw-macros"
+version = "2.0.1"
+source = "git+https://github.com/openvm-org/openvm.git?tag=v2.0.1#b820b25baab6c5d9b055f64e0286b6b1058e707c"
+dependencies = [
+ "openvm-macros-common",
+ "quote",
+ "syn 2.0.119",
+]
+
+[[package]]
 name = "openvm-keccak256"
 version = "2.0.1"
 source = "git+https://github.com/openvm-org/openvm.git?tag=v2.0.1#b820b25baab6c5d9b055f64e0286b6b1058e707c"
@@ -1065,13 +1121,15 @@ dependencies = [
  "ark-serialize",
  "blake2",
  "bytemuck",
- "groupmap 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "groupmap",
  "hex",
  "kimchi",
- "mina-curves 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
- "mina-poseidon 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
- "o1-utils 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
- "poly-commitment 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "mina-curves",
+ "mina-poseidon",
+ "o1-utils",
+ "openvm-algebra-guest",
+ "openvm-ecc-guest",
+ "poly-commitment",
  "postcard",
  "rand_chacha",
  "rand_core",
@@ -1095,42 +1153,16 @@ dependencies = [
  "ark-poly",
  "ark-serialize",
  "blake2",
- "groupmap 0.7.0",
+ "groupmap",
  "hashbrown 0.15.5",
  "hex",
  "itertools 0.12.1",
- "mina-curves 0.7.0",
- "mina-poseidon 0.7.0",
+ "mina-curves",
+ "mina-poseidon",
  "num-bigint",
- "o1-utils 0.7.0",
- "rand",
- "rand_core",
- "rayon",
- "rmp-serde",
- "serde",
- "serde_with",
- "thiserror 2.0.19",
- "zeroize",
-]
-
-[[package]]
-name = "poly-commitment"
-version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#788cb68f7cfd85bf443bc144fd1879ce88a581d6"
-dependencies = [
- "ark-ec",
- "ark-ff",
- "ark-poly",
- "ark-serialize",
- "blake2",
- "groupmap 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
- "hashbrown 0.15.5",
- "hex",
- "itertools 0.12.1",
- "mina-curves 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
- "mina-poseidon 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
- "num-bigint",
- "o1-utils 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "o1-utils",
+ "openvm-algebra-guest",
+ "openvm-ecc-guest",
  "rand",
  "rand_core",
  "rayon",
@@ -1318,6 +1350,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "sec1"
+version = "0.7.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d3e97a565f76233a6003f9f5c54be1d9c5bdfa3eccfb189469f11ec4901c47dc"
+dependencies = [
+ "base16ct",
+ "der",
+ "generic-array",
+ "subtle",
+ "zeroize",
+]
+
+[[package]]
 name = "serde"
 version = "1.0.229"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1417,6 +1462,16 @@ name = "shlex"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8fadd59c855ef2080decdef8ff161eb6661b86933c9d82e5ba29dc602a55aba"
+
+[[package]]
+name = "signature"
+version = "2.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77549399552de45a898a580c1b41d445bf730df867cc44e6c0233bbc4b8329de"
+dependencies = [
+ "digest",
+ "rand_core",
+]
 
 [[package]]
 name = "slab"

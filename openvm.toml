@@ -3,9 +3,9 @@
 # matching `moduli_init!` from this list. The order here defines the moduli
 # indices, so it must stay in sync with the declarations.
 #
-# Still to come: [[app_vm_config.ecc.supported_curves]] for Pallas and Vesta
-# (both a=0, b=5). Those need an arkworks <-> OpenVM bridge at the curve level,
-# which is where the ~95% of cycles spent on curve arithmetic actually live.
+# The Vesta curve is declared too: stage 2's accumulator is a 2^16-point Vesta
+# MSM and 60% of the guest's cycles, and pickles-verifier's `openvm_ec` routes it
+# through this chip. Pallas (the wrap side, ~35%) is not wired yet.
 [app_vm_config.rv32i]
 [app_vm_config.rv32m]
 [app_vm_config.io]
@@ -15,5 +15,28 @@ supported_moduli = [
   "28948022309329048855892746252171976963363056481941560715954676764349967630337",
   "28948022309329048855892746252171976963363056481941647379679742748393362948097",
 ]
+
+# Vesta: y^2 = x^3 + 5 over Fq, group order Fp. `struct_name` must match the
+# `sw_declare!` in pickles-verifier::openvm_ec.
+[[app_vm_config.ecc.supported_curves]]
+struct_name = "OpenVmVesta"
+modulus = "28948022309329048855892746252171976963363056481941647379679742748393362948097"
+scalar = "28948022309329048855892746252171976963363056481941560715954676764349967630337"
+a = "0"
+b = "5"
+
+# Pallas: y^2 = x^3 + 5 over Fp, group order Fq. The wrap proof lives here, so
+# poly-commitment's IPA MSM uses this chip.
+#
+# Order matters twice over: the curves here must match the `sw_declare!` order in
+# mina-curves, and a curve that is declared but NOT listed here links with
+# `undefined symbol: sw_*_extern_func_<Name>` -- declare and init always pair up.
+[[app_vm_config.ecc.supported_curves]]
+struct_name = "OpenVmPallas"
+modulus = "28948022309329048855892746252171976963363056481941560715954676764349967630337"
+scalar = "28948022309329048855892746252171976963363056481941647379679742748393362948097"
+a = "0"
+b = "5"
+
 # keccak256 for folding the attestation into OpenVM's 32-byte public output.
 [app_vm_config.keccak]
