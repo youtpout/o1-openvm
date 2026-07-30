@@ -188,12 +188,23 @@ That builds an invariant that lives in someone's memory rather than in the code,
 and a third call site wired to the wrong one reintroduces the hole silently. At
 under 2% the uniform checked version has no such failure mode.
 
-Related, and still open: `wire.rs` parses `challenge_polynomial_commitment` with
-`Vesta::new_unchecked`, so the *arkworks* path does not validate the curve
-equation either. The OpenVM path is therefore now stricter than the reference.
-Both end up rejecting the proof (the final equality fails), but by different
-mechanisms. The clean fix is to validate on ingest in `wire.rs`, which would
-benefit both zkVMs.
+### Guest input *is* already validated — do not "fix" wire.rs
+
+I claimed for a while that `wire.rs`'s `Vesta::new_unchecked` left the arkworks
+path unvalidated, and wrote that into commit `1269196`. It is wrong; the record is
+here so nobody acts on it.
+
+`wire.rs` is `cfg(feature = "std")`, host-only: it parses OCaml fixtures to
+*assemble* an input. The guest reads postcard, and every curve point in
+`UniversalInput` is annotated `#[serde_as(as = "SerdeAs")]`, whose
+`deserialize` calls `T::deserialize_compressed` — which in ark-serialize 0.5 is
+`deserialize_with_mode(.., Compress::Yes, Validate::Yes)`. That validates both
+the curve equation and prime-order subgroup membership.
+
+So both paths validate, just at deserialization rather than at JSON parsing. The
+`from_xy` check in the chip path is a redundant second check. Keep it anyway: at
++1.67% it is local and does not depend on reasoning at a distance about what a
+serialization layer happens to do.
 
 ## Verification protocol
 
