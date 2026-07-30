@@ -1,3 +1,19 @@
+# Pasta field acceleration is ON: mina-curves' `openvm` feature declares these
+# two moduli with `moduli_declare!`, and `openvm::init!()` in main.rs emits the
+# matching `moduli_init!` from this list. The order here defines the moduli
+# indices, so it must stay in sync with the declarations.
+#
+# Still to come: [[app_vm_config.ecc.supported_curves]] for Pallas and Vesta
+# (both a=0, b=5). Those need an arkworks <-> OpenVM bridge at the curve level,
+# which is where the ~95% of cycles spent on curve arithmetic actually live.
 [app_vm_config.rv32i]
 [app_vm_config.rv32m]
 [app_vm_config.io]
+[app_vm_config.modular]
+# Fp = Pallas base / Vesta scalar; Fq = Vesta base / Pallas scalar.
+supported_moduli = [
+  "28948022309329048855892746252171976963363056481941560715954676764349967630337",
+  "28948022309329048855892746252171976963363056481941647379679742748393362948097",
+]
+# keccak256 for folding the attestation into OpenVM's 32-byte public output.
+[app_vm_config.keccak]

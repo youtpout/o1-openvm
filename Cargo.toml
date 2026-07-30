@@ -1,7 +1,27 @@
 [package]
-name = "fibonacci"
+name = "o1-openvm-verifier"
 version = "0.1.0"
 edition = "2021"
 
+# The input generator is a host-only tool; keeping it out of this package's
+# workspace stops its std dependency tree from reaching the guest build.
+[workspace]
+exclude = ["tools/mkinput"]
+
 [dependencies]
 openvm = { git = "https://github.com/openvm-org/openvm.git", tag = "v2.0.1", features = ["std"] }
+# The verifier core. `default-features = false` drops `std`, which is what pulls
+# `kimchi/parallel` + `poly-commitment/parallel` -> rayon. A zkVM is
+# single-threaded, so parallel code paths cost chunking and atomics for no gain.
+pickles-verifier = { path = "../o1js-to-zkvm/crates/pickles-verifier", default-features = false, features = ["openvm"] }
+postcard = { version = "1", default-features = false, features = ["alloc"] }
+ark-ff = { version = "0.5", default-features = false }
+# keccak256 for the attestation digest -- OpenVM has a chip for it, and it is
+# what a Solidity consumer recomputes cheapest.
+openvm-keccak256 = { git = "https://github.com/openvm-org/openvm.git", tag = "v2.0.1" }
+
+[build-dependencies]
+# Host-side: loads the Pasta SRSes and bakes the protocol-constants blob.
+pickles-verifier = { path = "../o1js-to-zkvm/crates/pickles-verifier" }
+mina-curves = { path = "../o1js-to-zkvm/mina/src/lib/crypto/proof-systems/curves" }
+poly-commitment = { path = "../o1js-to-zkvm/mina/src/lib/crypto/proof-systems/poly-commitment" }

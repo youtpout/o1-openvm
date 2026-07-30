@@ -1,1 +1,5 @@
 /target
+/tools/mkinput/target
+*.app.proof
+input.json
+openvm/
