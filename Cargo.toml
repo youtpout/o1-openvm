@@ -9,24 +9,24 @@ edition = "2021"
 exclude = ["tools/mkinput"]
 
 [dependencies]
-openvm = { git = "https://github.com/openvm-org/openvm.git", tag = "v2.0.1", features = ["std"] }
+openvm = { git = "https://github.com/openvm-org/openvm.git", tag = "v2.1.0-preview", features = ["std"] }
 # The verifier core. `default-features = false` drops `std`, which is what pulls
 # `kimchi/parallel` + `poly-commitment/parallel` -> rayon. A zkVM is
 # single-threaded, so parallel code paths cost chunking and atomics for no gain.
-pickles-verifier = { git = "https://github.com/youtpout/o1js-to-zkvm", branch = "perf/batched-accumulator", default-features = false, features = ["openvm"] }
+pickles-verifier = { git = "https://github.com/youtpout/o1js-to-zkvm", branch = "migrate/openvm-2.1-rv64", default-features = false, features = ["openvm"] }
 postcard = { version = "1", default-features = false, features = ["alloc"] }
 ark-ff = { version = "0.5", default-features = false }
 # keccak256 for the attestation digest -- OpenVM has a chip for it, and it is
 # what a Solidity consumer recomputes cheapest.
-openvm-keccak256 = { git = "https://github.com/openvm-org/openvm.git", tag = "v2.0.1" }
+openvm-keccak256 = { git = "https://github.com/openvm-org/openvm.git", tag = "v2.1.0-preview" }
 # `openvm::init!()` expands to `openvm_algebra_guest::moduli_macros::moduli_init!`
 # (see the generated openvm_init.rs), so the BINARY needs this crate directly --
 # having it in mina-curves, where the matching `moduli_declare!` lives, is not
 # enough.
-openvm-algebra-guest = { git = "https://github.com/openvm-org/openvm.git", tag = "v2.0.1" }
+openvm-algebra-guest = { git = "https://github.com/openvm-org/openvm.git", tag = "v2.1.0-preview" }
 # `openvm::init!()` also emits `sw_init!` for the declared curves, so the binary
 # needs the ecc guest crate directly as well.
-openvm-ecc-guest = { git = "https://github.com/openvm-org/openvm.git", tag = "v2.0.1" }
+openvm-ecc-guest = { git = "https://github.com/openvm-org/openvm.git", tag = "v2.1.0-preview" }
 
 [build-dependencies]
 # Host-side: loads the Pasta SRSes and bakes the protocol-constants blob.
@@ -34,6 +34,7 @@ openvm-ecc-guest = { git = "https://github.com/openvm-org/openvm.git", tag = "v2
 # builds anywhere. They must also resolve to the SAME source as the guest's
 # copies: a path dep here plus a git dep there puts two `mina-curves` in the
 # graph, and their `Fp` types do not unify.
-pickles-verifier = { git = "https://github.com/youtpout/o1js-to-zkvm", branch = "perf/batched-accumulator" }
-mina-curves = { git = "https://github.com/youtpout/proof-systems", branch = "openvm-on-sp1-on-master" }
-poly-commitment = { git = "https://github.com/youtpout/proof-systems", branch = "openvm-on-sp1-on-master" }
+pickles-verifier = { git = "https://github.com/youtpout/o1js-to-zkvm", branch = "migrate/openvm-2.1-rv64" }
+mina-curves = { git = "https://github.com/youtpout/proof-systems", branch = "migrate/openvm-2.1-rv64" }
+poly-commitment = { git = "https://github.com/youtpout/proof-systems", branch = "migrate/openvm-2.1-rv64" }
+

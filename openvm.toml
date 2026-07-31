@@ -6,8 +6,8 @@
 # The Vesta curve is declared too: stage 2's accumulator is a 2^16-point Vesta
 # MSM and 60% of the guest's cycles, and pickles-verifier's `openvm_ec` routes it
 # through this chip. Pallas (the wrap side, ~35%) is not wired yet.
-[app_vm_config.rv32i]
-[app_vm_config.rv32m]
+[app_vm_config.rv64i]
+[app_vm_config.rv64m]
 [app_vm_config.io]
 [app_vm_config.modular]
 # Fp = Pallas base / Vesta scalar; Fq = Vesta base / Pallas scalar.

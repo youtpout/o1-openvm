@@ -529,6 +529,7 @@ dependencies = [
 [[package]]
 name = "groupmap"
 version = "0.7.0"
+source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#5ba1f140eefd7c3bf8c8ac38c878d248c9925183"
 dependencies = [
  "ark-ec",
  "ark-ff",
@@ -652,6 +653,7 @@ dependencies = [
 [[package]]
 name = "internal-tracing"
 version = "0.7.0"
+source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#5ba1f140eefd7c3bf8c8ac38c878d248c9925183"
 
 [[package]]
 name = "itertools"
@@ -691,6 +693,7 @@ dependencies = [
 [[package]]
 name = "kimchi"
 version = "0.7.0"
+source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#5ba1f140eefd7c3bf8c8ac38c878d248c9925183"
 dependencies = [
  "ark-ec",
  "ark-ff",
@@ -750,6 +753,7 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 [[package]]
 name = "mina-curves"
 version = "0.7.0"
+source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#5ba1f140eefd7c3bf8c8ac38c878d248c9925183"
 dependencies = [
  "ark-bn254",
  "ark-ec",
@@ -761,6 +765,7 @@ dependencies = [
 [[package]]
 name = "mina-poseidon"
 version = "0.7.0"
+source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#5ba1f140eefd7c3bf8c8ac38c878d248c9925183"
 dependencies = [
  "ark-ec",
  "ark-ff",
@@ -826,6 +831,7 @@ dependencies = [
 [[package]]
 name = "o1-utils"
 version = "0.7.0"
+source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#5ba1f140eefd7c3bf8c8ac38c878d248c9925183"
 dependencies = [
  "ark-ff",
  "ark-poly",
@@ -861,6 +867,7 @@ checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 [[package]]
 name = "pickles-verifier"
 version = "0.1.0"
+source = "git+https://github.com/youtpout/o1js-to-zkvm?branch=perf%2Fbatched-accumulator#276f324afc48ec74d3db4c7f276cfbd35530b005"
 dependencies = [
  "ark-ec",
  "ark-ff",
@@ -892,6 +899,7 @@ checksum = "a89322df9ebe1c1578d689c92318e070967d1042b512afbe49518723f4e6d5cd"
 [[package]]
 name = "poly-commitment"
 version = "0.7.0"
+source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#5ba1f140eefd7c3bf8c8ac38c878d248c9925183"
 dependencies = [
  "ark-ec",
  "ark-ff",

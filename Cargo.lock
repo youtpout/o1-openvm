@@ -630,15 +630,7 @@ dependencies = [
 [[package]]
 name = "groupmap"
 version = "0.7.0"
-dependencies = [
- "ark-ec",
- "ark-ff",
-]
-
-[[package]]
-name = "groupmap"
-version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#e0a135240e342483d461e7319b4b7cb32425148f"
+source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#8a4108deaf558078b2d6eccf7b6052fc5f42a6fe"
 dependencies = [
  "ark-ec",
  "ark-ff",
@@ -739,7 +731,7 @@ dependencies = [
 [[package]]
 name = "internal-tracing"
 version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#e0a135240e342483d461e7319b4b7cb32425148f"
+source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#8a4108deaf558078b2d6eccf7b6052fc5f42a6fe"
 
 [[package]]
 name = "itertools"
@@ -779,24 +771,24 @@ dependencies = [
 [[package]]
 name = "kimchi"
 version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#e0a135240e342483d461e7319b4b7cb32425148f"
+source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#8a4108deaf558078b2d6eccf7b6052fc5f42a6fe"
 dependencies = [
  "ark-ec",
  "ark-ff",
  "ark-poly",
  "ark-serialize",
  "blake2",
- "groupmap 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "groupmap",
  "hex",
  "internal-tracing",
  "itertools 0.12.1",
  "log",
- "mina-curves 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
- "mina-poseidon 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "mina-curves",
+ "mina-poseidon",
  "num-bigint",
  "num-integer",
- "o1-utils 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
- "poly-commitment 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "o1-utils",
+ "poly-commitment",
  "rand",
  "rand_core",
  "rayon",
@@ -845,18 +837,7 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 [[package]]
 name = "mina-curves"
 version = "0.7.0"
-dependencies = [
- "ark-bn254",
- "ark-ec",
- "ark-ff",
- "ark-std",
- "num-bigint",
-]
-
-[[package]]
-name = "mina-curves"
-version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#e0a135240e342483d461e7319b4b7cb32425148f"
+source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#8a4108deaf558078b2d6eccf7b6052fc5f42a6fe"
 dependencies = [
  "ark-bn254",
  "ark-ec",
@@ -873,30 +854,14 @@ dependencies = [
 [[package]]
 name = "mina-poseidon"
 version = "0.7.0"
+source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#8a4108deaf558078b2d6eccf7b6052fc5f42a6fe"
 dependencies = [
  "ark-ec",
  "ark-ff",
  "ark-poly",
  "ark-serialize",
- "mina-curves 0.7.0",
- "o1-utils 0.7.0",
- "rand",
- "rayon",
- "serde",
- "serde_with",
-]
-
-[[package]]
-name = "mina-poseidon"
-version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#e0a135240e342483d461e7319b4b7cb32425148f"
-dependencies = [
- "ark-ec",
- "ark-ff",
- "ark-poly",
- "ark-serialize",
- "mina-curves 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
- "o1-utils 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "mina-curves",
+ "o1-utils",
  "rand",
  "rayon",
  "serde",
@@ -971,43 +936,20 @@ name = "o1-openvm-verifier"
 version = "0.1.0"
 dependencies = [
  "ark-ff",
- "mina-curves 0.7.0",
+ "mina-curves",
  "openvm",
  "openvm-algebra-guest",
  "openvm-ecc-guest",
  "openvm-keccak256",
  "pickles-verifier",
- "poly-commitment 0.7.0",
+ "poly-commitment",
  "postcard",
 ]
 
 [[package]]
 name = "o1-utils"
 version = "0.7.0"
-dependencies = [
- "ark-ff",
- "ark-poly",
- "ark-serialize",
- "bcs",
- "hex",
- "num-bigint",
- "num-integer",
- "rand",
- "rayon",
- "rmp-serde",
- "rustversion",
- "serde",
- "serde_json",
- "serde_with",
- "sha2",
- "spin",
- "thiserror 2.0.19",
-]
-
-[[package]]
-name = "o1-utils"
-version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#e0a135240e342483d461e7319b4b7cb32425148f"
+source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#8a4108deaf558078b2d6eccf7b6052fc5f42a6fe"
 dependencies = [
  "ark-ff",
  "ark-poly",
@@ -1036,23 +978,24 @@ checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
 
 [[package]]
 name = "openvm"
-version = "2.0.1"
-source = "git+https://github.com/openvm-org/openvm.git?tag=v2.0.1#b820b25baab6c5d9b055f64e0286b6b1058e707c"
+version = "2.0.0"
+source = "git+https://github.com/openvm-org/openvm.git?tag=v2.1.0-preview#538c5488130da56c8442d33445efe3c1fe5ea8b8"
 dependencies = [
  "bytemuck",
  "getrandom 0.2.17",
  "getrandom 0.3.4",
  "num-bigint",
  "openvm-custom-insn",
+ "openvm-mem",
  "openvm-platform",
- "openvm-rv32im-guest",
+ "openvm-riscv-guest",
  "serde",
 ]
 
 [[package]]
 name = "openvm-algebra-complex-macros"
-version = "2.0.1"
-source = "git+https://github.com/openvm-org/openvm.git?tag=v2.0.1#b820b25baab6c5d9b055f64e0286b6b1058e707c"
+version = "2.0.0"
+source = "git+https://github.com/openvm-org/openvm.git?tag=v2.1.0-preview#538c5488130da56c8442d33445efe3c1fe5ea8b8"
 dependencies = [
  "openvm-macros-common",
  "quote",
@@ -1061,23 +1004,23 @@ dependencies = [
 
 [[package]]
 name = "openvm-algebra-guest"
-version = "2.0.1"
-source = "git+https://github.com/openvm-org/openvm.git?tag=v2.0.1#b820b25baab6c5d9b055f64e0286b6b1058e707c"
+version = "2.0.0"
+source = "git+https://github.com/openvm-org/openvm.git?tag=v2.1.0-preview#538c5488130da56c8442d33445efe3c1fe5ea8b8"
 dependencies = [
  "num-bigint",
  "once_cell",
  "openvm-algebra-complex-macros",
  "openvm-algebra-moduli-macros",
  "openvm-custom-insn",
- "openvm-rv32im-guest",
+ "openvm-riscv-guest",
  "serde-big-array",
  "strum_macros",
 ]
 
 [[package]]
 name = "openvm-algebra-moduli-macros"
-version = "2.0.1"
-source = "git+https://github.com/openvm-org/openvm.git?tag=v2.0.1#b820b25baab6c5d9b055f64e0286b6b1058e707c"
+version = "2.0.0"
+source = "git+https://github.com/openvm-org/openvm.git?tag=v2.1.0-preview#538c5488130da56c8442d33445efe3c1fe5ea8b8"
 dependencies = [
  "num-bigint",
  "num-prime",
@@ -1088,8 +1031,8 @@ dependencies = [
 
 [[package]]
 name = "openvm-custom-insn"
-version = "2.0.1"
-source = "git+https://github.com/openvm-org/openvm.git?tag=v2.0.1#b820b25baab6c5d9b055f64e0286b6b1058e707c"
+version = "0.1.0"
+source = "git+https://github.com/openvm-org/openvm.git?tag=v2.1.0-preview#538c5488130da56c8442d33445efe3c1fe5ea8b8"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1098,8 +1041,8 @@ dependencies = [
 
 [[package]]
 name = "openvm-ecc-guest"
-version = "2.0.1"
-source = "git+https://github.com/openvm-org/openvm.git?tag=v2.0.1#b820b25baab6c5d9b055f64e0286b6b1058e707c"
+version = "2.0.0"
+source = "git+https://github.com/openvm-org/openvm.git?tag=v2.1.0-preview#538c5488130da56c8442d33445efe3c1fe5ea8b8"
 dependencies = [
  "ecdsa",
  "elliptic-curve",
@@ -1109,15 +1052,15 @@ dependencies = [
  "openvm-algebra-guest",
  "openvm-custom-insn",
  "openvm-ecc-sw-macros",
- "openvm-rv32im-guest",
+ "openvm-riscv-guest",
  "serde",
  "strum_macros",
 ]
 
 [[package]]
 name = "openvm-ecc-sw-macros"
-version = "2.0.1"
-source = "git+https://github.com/openvm-org/openvm.git?tag=v2.0.1#b820b25baab6c5d9b055f64e0286b6b1058e707c"
+version = "2.0.0"
+source = "git+https://github.com/openvm-org/openvm.git?tag=v2.1.0-preview#538c5488130da56c8442d33445efe3c1fe5ea8b8"
 dependencies = [
  "openvm-macros-common",
  "quote",
@@ -1126,8 +1069,8 @@ dependencies = [
 
 [[package]]
 name = "openvm-keccak256"
-version = "2.0.1"
-source = "git+https://github.com/openvm-org/openvm.git?tag=v2.0.1#b820b25baab6c5d9b055f64e0286b6b1058e707c"
+version = "2.0.0"
+source = "git+https://github.com/openvm-org/openvm.git?tag=v2.1.0-preview#538c5488130da56c8442d33445efe3c1fe5ea8b8"
 dependencies = [
  "openvm-keccak256-guest",
  "spin",
@@ -1136,34 +1079,39 @@ dependencies = [
 
 [[package]]
 name = "openvm-keccak256-guest"
-version = "2.0.1"
-source = "git+https://github.com/openvm-org/openvm.git?tag=v2.0.1#b820b25baab6c5d9b055f64e0286b6b1058e707c"
+version = "2.0.0"
+source = "git+https://github.com/openvm-org/openvm.git?tag=v2.1.0-preview#538c5488130da56c8442d33445efe3c1fe5ea8b8"
 dependencies = [
  "openvm-platform",
 ]
 
 [[package]]
 name = "openvm-macros-common"
-version = "2.0.1"
-source = "git+https://github.com/openvm-org/openvm.git?tag=v2.0.1#b820b25baab6c5d9b055f64e0286b6b1058e707c"
+version = "2.0.0"
+source = "git+https://github.com/openvm-org/openvm.git?tag=v2.1.0-preview#538c5488130da56c8442d33445efe3c1fe5ea8b8"
 dependencies = [
  "syn 2.0.119",
 ]
 
 [[package]]
+name = "openvm-mem"
+version = "2.0.0"
+source = "git+https://github.com/openvm-org/openvm.git?tag=v2.1.0-preview#538c5488130da56c8442d33445efe3c1fe5ea8b8"
+
+[[package]]
 name = "openvm-platform"
-version = "2.0.1"
-source = "git+https://github.com/openvm-org/openvm.git?tag=v2.0.1#b820b25baab6c5d9b055f64e0286b6b1058e707c"
+version = "2.0.0"
+source = "git+https://github.com/openvm-org/openvm.git?tag=v2.1.0-preview#538c5488130da56c8442d33445efe3c1fe5ea8b8"
 dependencies = [
  "libm",
  "openvm-custom-insn",
- "openvm-rv32im-guest",
+ "openvm-riscv-guest",
 ]
 
 [[package]]
-name = "openvm-rv32im-guest"
-version = "2.0.1"
-source = "git+https://github.com/openvm-org/openvm.git?tag=v2.0.1#b820b25baab6c5d9b055f64e0286b6b1058e707c"
+name = "openvm-riscv-guest"
+version = "2.0.0"
+source = "git+https://github.com/openvm-org/openvm.git?tag=v2.1.0-preview#538c5488130da56c8442d33445efe3c1fe5ea8b8"
 dependencies = [
  "openvm-custom-insn",
  "strum_macros",
@@ -1178,6 +1126,7 @@ checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 [[package]]
 name = "pickles-verifier"
 version = "0.1.0"
+source = "git+https://github.com/youtpout/o1js-to-zkvm?branch=migrate%2Fopenvm-2.1-rv64#61615467c19f0dda92f1675d0c8be860fd5f719e"
 dependencies = [
  "ark-ec",
  "ark-ff",
@@ -1185,15 +1134,15 @@ dependencies = [
  "ark-serialize",
  "blake2",
  "bytemuck",
- "groupmap 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "groupmap",
  "hex",
  "kimchi",
- "mina-curves 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
- "mina-poseidon 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
- "o1-utils 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "mina-curves",
+ "mina-poseidon",
+ "o1-utils",
  "openvm-algebra-guest",
  "openvm-ecc-guest",
- "poly-commitment 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "poly-commitment",
  "postcard",
  "rand_chacha",
  "rand_core",
@@ -1211,48 +1160,21 @@ checksum = "a89322df9ebe1c1578d689c92318e070967d1042b512afbe49518723f4e6d5cd"
 [[package]]
 name = "poly-commitment"
 version = "0.7.0"
+source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#8a4108deaf558078b2d6eccf7b6052fc5f42a6fe"
 dependencies = [
  "ark-ec",
  "ark-ff",
  "ark-poly",
  "ark-serialize",
  "blake2",
- "groupmap 0.7.0",
+ "groupmap",
  "hashbrown 0.15.5",
  "hex",
  "itertools 0.12.1",
- "mina-curves 0.7.0",
- "mina-poseidon 0.7.0",
+ "mina-curves",
+ "mina-poseidon",
  "num-bigint",
- "o1-utils 0.7.0",
- "rand",
- "rand_core",
- "rayon",
- "rmp-serde",
- "serde",
- "serde_with",
- "thiserror 2.0.19",
- "zeroize",
-]
-
-[[package]]
-name = "poly-commitment"
-version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master#e0a135240e342483d461e7319b4b7cb32425148f"
-dependencies = [
- "ark-ec",
- "ark-ff",
- "ark-poly",
- "ark-serialize",
- "blake2",
- "groupmap 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
- "hashbrown 0.15.5",
- "hex",
- "itertools 0.12.1",
- "mina-curves 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
- "mina-poseidon 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
- "num-bigint",
- "o1-utils 0.7.0 (git+https://github.com/youtpout/proof-systems?branch=openvm-on-sp1-on-master)",
+ "o1-utils",
  "openvm-algebra-guest",
  "openvm-ecc-guest",
  "rand",

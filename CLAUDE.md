@@ -42,9 +42,14 @@ so the numbers compare like for like.
 | + Vesta curve | 5,815,088,237 | 220,926,602,404 | ×5.47 |
 | + Pallas curve | 2,249,380,517 | 86,644,291,990 | ×14.15 |
 | + checked point construction | 2,286,997,815 | 88,224,421,019 | ×13.91 |
-| **+ VK validation, no heap allocs** | **2,230,979,102** | **85,934,163,225** | **×14.26** |
+| + VK validation, no heap allocs | 2,230,979,102 | 85,934,163,225 | ×14.26 |
+| **+ OpenVM 2.1 / rv64** | **898,656,552** | **32,057,167,004** | **×35.41** |
 
-The last row is the shipped configuration. Note the direction of the final row:
+The last row is the shipped configuration; every row above it is rv32 on 2.0.1.
+The rv64 jump is a pure toolchain move — no code change beyond widening the
+`target_os` gates — and is worth ×2.48 instructions / ×2.68 cells on its own.
+
+Note the direction of the VK-validation row:
 adding curve validation on the 28 VK commitments *and* dropping the heap
 allocations in the limb conversion nets **−2.45% instructions / −2.60% cells**.
 Security was added at negative cost. `to_bytes_le()` allocated a `Vec` per
@@ -59,8 +64,12 @@ law in Rust — identity on either side, `P = Q` via `double`, `P = -Q` to ident
 — and only delegates the non-degenerate cases to the `add_ne`/`double`
 intrinsics. The naming (`sw_add_ne_extern_func`) is the giveaway.
 
-SP1 (riscv64, `sys_bigint`) costs 4,378,867,074 cycles for the same work, so
-OpenVM with both curve chips lands ~1.95× *better* — on a 32-bit core.
+SP1 (riscv64, `sys_bigint`) costs 4,378,867,074 cycles for the same work: ~1.95×
+*more* than the rv32 OpenVM build, and ~4.87× more than the rv64 one. Treat both
+ratios as indicative only — an SP1 cycle and an OpenVM instruction are not the
+same unit, and there is no SP1 equivalent of the trace-cell count, which is the
+figure that actually tracks proving cost. The comparison worth trusting is
+rv32-vs-rv64 *within* OpenVM, where both metrics are available and agree.
 
 Two lessons in that table:
 
@@ -151,18 +160,57 @@ the attestation into one digest instead. We use
 `keccak256(abi.encode(bytes32 vkHash, bytes32[] statement))`, verifiable with
 `cast abi-encode` + `cast keccak`.
 
-### OpenVM 2.0 is riscv32
+### OpenVM 2.0 is riscv32, 2.1 is riscv64
 
-`RUSTC_TARGET = riscv32im-risc0-zkvm-elf`; there is no rv64 extension. SP1 is
-riscv64. So 256-bit arithmetic needs ~4× more instructions per operation unless it
-goes through a chip — instruction counts are **not** comparable across the two
-VMs without saying this.
+2.0.1: `RUSTC_TARGET = riscv32im-risc0-zkvm-elf`, `target_os = "zkvm"`, config
+sections `[app_vm_config.rv32i]` / `rv32m`.
 
-### `--mode meter` needs `app.pk`
+2.1 (`v2.1.0-preview`): `riscv64im-unknown-openvm-elf`, `target_os = "openvm"`,
+sections `rv64i` / `rv64m`. The target is a **custom** one from the
+`openvm-org/rust` fork, not an upstream rustc target — get it with
+`cargo openvm toolchain install`, which downloads a prebuilt toolchain (no rustc
+build). Everything else (`modular`, `ecc`, `keccak`, `io`) keeps its name, and
+`moduli_declare!` / `sw_declare!` / `IntMod` / `from_xy` are unchanged, so the
+port is mechanical.
+
+Measured on the mainnet fixture, chips enabled: rv32 2,230,978,700 instr /
+85,934,147,775 cells → rv64 898,656,552 / 32,057,167,004, i.e. **×2.48 and
+×2.68**. The worry that wider rv64 columns would eat the instruction saving did
+not materialise — the cell gain is the larger of the two. Unaccelerated, the same
+work is 31.8B (rv32) vs 9.13B (rv64), so rv64 alone is worth ×3.49 in software.
+
+### The rv64 rename silently deletes every accelerated path
+
+This is the worst failure mode in this project so far, because **nothing fails**.
+Moving to 2.1 flips `target_os` from `zkvm` to `openvm`, which invalidates two
+separate layers at once:
+
+  * `#[cfg(all(target_os = "zkvm", feature = "openvm"))]` on the accelerated code
+  * `[target.'cfg(target_os = "zkvm")'.dependencies]`, without which the openvm
+    guest crates are not even linked
+
+With both stale, the guest builds clean, runs clean, and produces the **correct
+digest** — on the arkworks software path, ~10× slower. Only a cycle measurement
+reveals it. Both layers now accept
+`any(target_os = "zkvm", target_os = "openvm")`, and a `compile_error!` guard in
+`mina-curves`, `poly-commitment` and `pickles-verifier` fails the build when
+`openvm` is on for a RISC-V target with an unrecognised `target_os`. Host builds
+are unaffected — they legitimately use the software path.
+
+Corollary for any future target change: a correct digest proves the *math*, not
+that the chips ran. Always confirm against a known instruction count.
+
+### `--mode meter` needs `app.pk` — and a stale one panics obscurely
 
 Run `cargo openvm keygen --app-only` first, and again after any `openvm.toml`
-change. `openvm/` is generated (`app.pk`, `app.vk`, the transpiled vmexe) and
-gitignored.
+change **or any OpenVM version change**. `openvm/` is generated (`app.pk`,
+`app.vk`, the transpiled vmexe) and gitignored.
+
+An `app.pk` left over from a different OpenVM version fails as
+`Memory access out of bounds: start=144 size=8 memory_size=128` from
+`memory/online/memmap.rs` — an rv64 ELF executed against an rv32 memory config.
+The message names neither the key nor the version, and the CLI is stripped so the
+backtrace is empty. `rm -rf openvm/app.pk openvm/app.vk` and re-keygen.
 
 ## Cargo gotchas
 
