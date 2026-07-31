@@ -34,7 +34,11 @@ openvm-ecc-guest = { git = "https://github.com/openvm-org/openvm.git", tag = "v2
 # builds anywhere. They must also resolve to the SAME source as the guest's
 # copies: a path dep here plus a git dep there puts two `mina-curves` in the
 # graph, and their `Fp` types do not unify.
-pickles-verifier = { git = "https://github.com/youtpout/o1js-to-zkvm", branch = "migrate/openvm-2.1-rv64" }
+# `canonical-blob` bakes the constants in the same field representation the
+# guest stores (canonical, not Montgomery -- see mina-curves' `openvm` path).
+# The blob is a raw memory image, so this is not cosmetic: without it every
+# baked point decodes to a different curve point. The blob header carries a
+# representation byte and the guest asserts on it.
+pickles-verifier = { git = "https://github.com/youtpout/o1js-to-zkvm", branch = "migrate/openvm-2.1-rv64", features = ["canonical-blob"] }
 mina-curves = { git = "https://github.com/youtpout/proof-systems", branch = "migrate/openvm-2.1-rv64" }
 poly-commitment = { git = "https://github.com/youtpout/proof-systems", branch = "migrate/openvm-2.1-rv64" }
-

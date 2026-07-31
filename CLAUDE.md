@@ -43,9 +43,11 @@ so the numbers compare like for like.
 | + Pallas curve | 2,249,380,517 | 86,644,291,990 | ×14.15 |
 | + checked point construction | 2,286,997,815 | 88,224,421,019 | ×13.91 |
 | + VK validation, no heap allocs | 2,230,979,102 | 85,934,163,225 | ×14.26 |
-| **+ OpenVM 2.1 / rv64** | **898,656,552** | **32,057,167,004** | **×35.41** |
+| + OpenVM 2.1 / rv64 | 898,656,552 | 32,057,167,004 | ×35.41 |
+| **+ canonical field storage** | **724,387,584** | **25,826,089,173** | **×43.93** |
 
-The last row is the shipped configuration; every row above it is rv32 on 2.0.1.
+The last row is the shipped configuration; every row above the rv64 one is rv32
+on 2.0.1.
 The rv64 jump is a pure toolchain move — no code change beyond widening the
 `target_os` gates — and is worth ×2.48 instructions / ×2.68 cells on its own.
 
@@ -57,6 +59,68 @@ coordinate — ~130k allocations per 2^16 MSM, on a path where the allocator is
 plain RISC-V and every byte crosses the memory chip. Read the `[u64]` limbs via
 `BigInteger: AsRef<[u64]>` instead (`.0` does not compile: `F::BigInt` is an
 associated type).
+
+### Canonical field storage — where the last ×1.24 came from
+
+arkworks stores Montgomery form (`aR mod p`); the modular chip's `IntMod` is
+canonical. Bridging them cost **two** chip instructions per multiplication: the
+product `abR²`, then a multiply by `R⁻¹`. Storing canonical values makes it one.
+
+Two constants select the representation, and they must **not** get the same
+value — this is the part that is easy to get wrong:
+
+- `R` is only ever read as `FpConfig::ONE = Fp::new_unchecked(R)`. Canonical ONE
+  means `R = 1`.
+- `R2` is read by the **const** constructor `Fp::new`, which is what `MontFp!`
+  expands to: `mont_mul(e, R2) = e·R2·2⁻²⁵⁶`. That path is const arithmetic
+  inside ark-ff and ignores every `MontConfig` override, so cancelling it needs
+  `R2 = 2²⁵⁶ mod p` — the value `R` has by default. Both Pasta curve configs
+  (`COEFF_B`, the generators) are `MontFp!` literals, so this is what keeps them
+  correct. Set `R2 = 1` too and the curve parameters silently become garbage.
+
+`GENERATOR` and `TWO_ADIC_ROOT_OF_UNITY` then have to be written as canonical
+decimals rather than carried over as Montgomery limbs. `mina-curves`'
+`openvm_canonical_constants` test pins both against the derived config.
+
+Three things fell out of the change, in rough order of value:
+
+- **`mul_assign`: 2 chip instructions → 1.**
+- **`into_bigint` becomes a move.** It was a 16-mac Montgomery reduction, and it
+  sits on the hot path twice over — every coordinate *and* every scalar crossing
+  into the curve chip goes through it, ~196k times for the 2^16 MSM alone.
+- **`inverse` via the chip's `DivMod`** (`ModArithBaseFunct7::DivMod`) instead of
+  arkworks' software extended Euclid.
+
+Gate all of it on the zkVM *target*, not just the feature: a host build with
+`openvm` on keeps arkworks' software Montgomery multiplication, which only agrees
+with Montgomery *storage*.
+
+### fq.rs had a dead gate for the whole OpenVM path
+
+Worth knowing because the failure mode is invisible: `impl MontConfig for
+FrConfig` in `curves/src/pasta/fields/fq.rs` was `#[cfg(feature = "sp1")]`, so an
+`openvm` build resolved `FrConfig` to the *derived* config and compiled none of
+the OpenVM Fq code. The `mul_assign` inside it was correctly gated in itself —
+it just lived in a block that never existed. `fp.rs` had the right gate all
+along, which is why the table's "+ modular (Fp/Fq)" row was really Fp only.
+
+Fq is Vesta's base field and Pallas's scalar field, i.e. every coordinate on the
+chip boundary. Same lesson as the rv64 rename: an accelerated path that is not
+compiled produces correct results, silently, at software speed.
+
+### The constants blob encodes a representation, not just values
+
+`serialize.rs` bakes points as a raw memory image and casts them straight back —
+that is what makes decoding free, and it means the blob is only readable by a
+consumer with the *same* field representation. A canonical guest reading a
+Montgomery blob gets different curve points; it surfaced as `Vesta point not on
+curve` from a constructor three layers down.
+
+The blob now carries a representation byte. The encoder always runs on the host
+and cannot detect what the consumer wants, so it is selected by
+pickles-verifier's `canonical-blob` feature **on the build dependency**; the
+decoder's side is derived from how that crate is actually compiled, so the
+assertion compares an intent against a fact rather than a flag against itself.
 
 Also worth recording: the identity is safe to pass into
 `openvm_ecc_guest::msm`. The `sw_declare!` expansion implements the full group
@@ -310,6 +374,15 @@ mode in practice.
 Also: `sp1_build` silently reuses a cached ELF. `rm -rf target/elf-compilation`
 before any measurement that is supposed to reflect a change — two of my early
 runs returned byte-identical cycle counts because the guest was never rebuilt.
+
+### Measure the git build, not the path build
+
+Local `path` deps and git deps do not produce identical instruction counts: the
+canonical-storage change measured 724,385,778 through local paths and
+724,387,584 from the pushed branches. The 1,806-instruction gap is the source
+paths embedded in panic-location strings, not a code difference — but it means
+a number taken during fast iteration will not reproduce from a clean checkout.
+Re-measure after switching the deps back to git, and record that one.
 
 ## Security invariants
 

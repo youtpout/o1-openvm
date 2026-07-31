@@ -22,13 +22,16 @@
 //!
 //! # Status
 //!
-//! This is the **baseline**: no Pasta-specific acceleration. `parallel` is off
-//! (see Cargo.toml), which is the one thing that must be right in any zkVM
-//! build. OpenVM's modular-arithmetic and Weierstrass extensions accept
-//! arbitrary moduli and curves, so Pallas/Vesta chips are possible -- but they
-//! act on OpenVM's own types, while kimchi works on arkworks types throughout.
-//! Bridging the two is the next piece of work, and where the ~95% of cycles
-//! spent on Pasta curve arithmetic can actually be attacked.
+//! Fully accelerated, contrary to what this block claimed for several commits:
+//! both Pasta curves go through OpenVM's Weierstrass chips, and `mina-curves`
+//! stores field elements canonically so a multiplication reaches the modular
+//! chip in one instruction rather than two. `parallel` is off (see Cargo.toml),
+//! which is the one thing that must be right in any zkVM build.
+//!
+//! The chips act on OpenVM's own types while kimchi works on arkworks types
+//! throughout. The bridge lives in `poly_commitment::openvm_msm`,
+//! `pickles_verifier::openvm_ec` and `mina-curves`' `MontConfig` overrides; see
+//! CLAUDE.md for what each layer is worth.
 
 extern crate alloc;
 
