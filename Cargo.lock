@@ -630,7 +630,7 @@ dependencies = [
 [[package]]
 name = "groupmap"
 version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#de844632327d960aea250b474e623df01562c3e2"
+source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#b9081950323fb5cc7506cc7e453db6bd43a99938"
 dependencies = [
  "ark-ec",
  "ark-ff",
@@ -731,7 +731,7 @@ dependencies = [
 [[package]]
 name = "internal-tracing"
 version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#de844632327d960aea250b474e623df01562c3e2"
+source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#b9081950323fb5cc7506cc7e453db6bd43a99938"
 
 [[package]]
 name = "itertools"
@@ -771,7 +771,7 @@ dependencies = [
 [[package]]
 name = "kimchi"
 version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#de844632327d960aea250b474e623df01562c3e2"
+source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#b9081950323fb5cc7506cc7e453db6bd43a99938"
 dependencies = [
  "ark-ec",
  "ark-ff",
@@ -837,12 +837,13 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 [[package]]
 name = "mina-curves"
 version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#de844632327d960aea250b474e623df01562c3e2"
+source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#b9081950323fb5cc7506cc7e453db6bd43a99938"
 dependencies = [
  "ark-bn254",
  "ark-ec",
  "ark-ff",
  "ark-std",
+ "bytemuck",
  "num-bigint",
  "openvm",
  "openvm-algebra-guest",
@@ -854,12 +855,13 @@ dependencies = [
 [[package]]
 name = "mina-poseidon"
 version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#de844632327d960aea250b474e623df01562c3e2"
+source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#b9081950323fb5cc7506cc7e453db6bd43a99938"
 dependencies = [
  "ark-ec",
  "ark-ff",
  "ark-poly",
  "ark-serialize",
+ "bytemuck",
  "mina-curves",
  "o1-utils",
  "openvm-algebra-guest",
@@ -950,7 +952,7 @@ dependencies = [
 [[package]]
 name = "o1-utils"
 version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#de844632327d960aea250b474e623df01562c3e2"
+source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#b9081950323fb5cc7506cc7e453db6bd43a99938"
 dependencies = [
  "ark-ff",
  "ark-poly",
@@ -1127,7 +1129,7 @@ checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 [[package]]
 name = "pickles-verifier"
 version = "0.1.0"
-source = "git+https://github.com/youtpout/o1js-to-zkvm?branch=migrate%2Fopenvm-2.1-rv64#dcaa5a95edcb506031c102945d7fe2b17d34f48f"
+source = "git+https://github.com/youtpout/o1js-to-zkvm?branch=migrate%2Fopenvm-2.1-rv64#24f942f5e13d092524d7000c9eb3027a91d7bc55"
 dependencies = [
  "ark-ec",
  "ark-ff",
@@ -1161,13 +1163,14 @@ checksum = "a89322df9ebe1c1578d689c92318e070967d1042b512afbe49518723f4e6d5cd"
 [[package]]
 name = "poly-commitment"
 version = "0.7.0"
-source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#de844632327d960aea250b474e623df01562c3e2"
+source = "git+https://github.com/youtpout/proof-systems?branch=migrate%2Fopenvm-2.1-rv64#b9081950323fb5cc7506cc7e453db6bd43a99938"
 dependencies = [
  "ark-ec",
  "ark-ff",
  "ark-poly",
  "ark-serialize",
  "blake2",
+ "bytemuck",
  "groupmap",
  "hashbrown 0.15.5",
  "hex",

@@ -45,7 +45,9 @@ so the numbers compare like for like.
 | + VK validation, no heap allocs | 2,230,979,102 | 85,934,163,225 | ×14.26 |
 | + OpenVM 2.1 / rv64 | 898,656,552 | 32,057,167,004 | ×35.41 |
 | + canonical field storage | 724,387,584 | 25,826,089,173 | ×43.93 |
-| **+ Poseidon on the chip** | **697,235,468** | **24,905,746,771** | **×45.64** |
+| + Poseidon on the chip | 697,235,468 | 24,905,746,771 | ×45.64 |
+| + zero-copy limb bridge | 664,797,171 | 23,899,549,955 | ×47.86 |
+| **+ Pippenger window c=12** | **440,506,582** | **15,851,212,777** | **×72.23** |
 
 The last row is the shipped configuration; every row above the rv64 one is rv32
 on 2.0.1.
@@ -130,6 +132,47 @@ Two guards on the fast path, both deliberate: it checks the sponge *shape* it
 implements (width 3, all-full-rounds, `x^7`, full MDS) rather than assuming
 kimchi's constants, and it dispatches by `TypeId` with a fallback. `Field` is
 already `'static` in ark-ff, so no caller gains a bound.
+
+### The MSM window was the single biggest win — and it was in someone else's code
+
+`openvm_ecc_guest::msm` sizes its Pippenger window at `bases.len().ilog2()`,
+which is **16** for the `2^16`-point accumulator MSM. That is well past the
+optimum: the bucket pass costs `2^c` additions per window and overtakes the `n`
+additions it is meant to save.
+
+| window | windows | point ops | bucket memory |
+|---|---|---|---|
+| upstream `c = 16` (Booth) | 17 | 2.23M | 2 MiB |
+| ours, `c = 12` | 22 | 1.62M | 256 KiB |
+
+Replacing it with a plain unsigned Pippenger at the computed optimum
+(`poly-commitment::openvm_pippenger`) was **−33.7% on the whole guest**, in one
+change.
+
+**Do not read that as "the MSM was 33.7%".** The operation count only predicts
+×1.38; if that were the whole story the MSM would have to be more than 100% of
+the guest. Something else carries most of it, and the likely candidate is the
+bucket memory — upstream allocates and clears 2 MiB of buckets per window, 17
+times, and in a zkVM every one of those bytes crosses the memory chip. That is a
+hypothesis, not something these numbers establish.
+
+The transferable lesson: a dependency's "reasonable default" is tuned for a
+machine you are not running on. `// finetune this if needed` is in upstream's
+source, right above the line.
+
+Booth encoding would halve the bucket count again, worth roughly another 9%.
+Skipped deliberately: it earns that with a signed-digit encoding that is easy to
+get subtly wrong, and the window size is where the factor is.
+
+### What did *not* pay: batch inversion
+
+Written, measured, reverted — recorded so nobody re-derives it. With `DivMod` at
+one instruction, Montgomery's trick pays ~3n multiplications to save n
+inversions, so direct inversion should be ~3× cheaper. It is; the volume is just
+trivial. Swapping every `batch_inversion` on the verify path for direct
+inversions was **−13,554 instructions, −0.002%**, against a new module, a
+feature across three crates, and eight call sites. The reasoning was right and
+the change was still not worth keeping.
 
 ### How to attribute cost to a component
 
