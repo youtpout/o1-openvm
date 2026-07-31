@@ -42,3 +42,4 @@ openvm-ecc-guest = { git = "https://github.com/openvm-org/openvm.git", tag = "v2
 pickles-verifier = { git = "https://github.com/youtpout/o1js-to-zkvm", branch = "migrate/openvm-2.1-rv64", features = ["canonical-blob"] }
 mina-curves = { git = "https://github.com/youtpout/proof-systems", branch = "migrate/openvm-2.1-rv64" }
 poly-commitment = { git = "https://github.com/youtpout/proof-systems", branch = "migrate/openvm-2.1-rv64" }
+

@@ -44,7 +44,8 @@ so the numbers compare like for like.
 | + checked point construction | 2,286,997,815 | 88,224,421,019 | ×13.91 |
 | + VK validation, no heap allocs | 2,230,979,102 | 85,934,163,225 | ×14.26 |
 | + OpenVM 2.1 / rv64 | 898,656,552 | 32,057,167,004 | ×35.41 |
-| **+ canonical field storage** | **724,387,584** | **25,826,089,173** | **×43.93** |
+| + canonical field storage | 724,387,584 | 25,826,089,173 | ×43.93 |
+| **+ Poseidon on the chip** | **697,235,468** | **24,905,746,771** | **×45.64** |
 
 The last row is the shipped configuration; every row above the rv64 one is rv32
 on 2.0.1.
@@ -94,6 +95,54 @@ Three things fell out of the change, in rough order of value:
 Gate all of it on the zkVM *target*, not just the feature: a host build with
 `openvm` on keeps arkworks' software Montgomery multiplication, which only agrees
 with Montgomery *storage*.
+
+### The conversion around a chip op costs ~100× the chip op
+
+The number worth remembering from the Poseidon work. Measured by adding N
+permutations to the production guest and taking the delta:
+
+| | value |
+|---|---|
+| permutations per verification | 303 |
+| before: per permutation | 119,140 instructions |
+| multiplications per permutation | 1,155 (55 rounds × [3 S-boxes × 4 + MDS 9]) |
+| → per multiplication | **~103 instructions, of which 1 is the multiply** |
+
+The other ~102 are `limbs_to_mod` / `mod_to_limbs`: arkworks stores `[u64; 4]`,
+`IntMod` stores `[u8; 32]`, and the bridge copies 32 bytes three times per
+multiply (two operands, one result). `fp.rs` used to say "the cost is 32 byte
+copies against a chip call" — true when a multiply was two chip instructions
+*plus* a Montgomery reduction. Canonical storage inverted it.
+
+Running the whole permutation in `IntMod` (`mina-poseidon::openvm_perm`) moves
+the conversions to the boundary — 3 in, 3 out, plus round constants, instead of
+~3,465 — and takes a permutation to ~29,400 instructions, ×4.05. Poseidon went
+from 5.0% of the guest to ~1.3%.
+
+**The general lesson, and the next lever.** Attach the chip at the level of the
+algorithm, not the operation — the same shape as the MSM bridge. And the ~25
+instructions per multiply that remain are still mostly conversion: making the
+limb/byte bridge itself zero-copy (both layouts are little-endian and identical;
+`bytemuck::cast_ref` does it in safe Rust) would pay everywhere at once, not
+just in the sponge.
+
+Two guards on the fast path, both deliberate: it checks the sponge *shape* it
+implements (width 3, all-full-rounds, `x^7`, full MDS) rather than assuming
+kimchi's constants, and it dispatches by `TypeId` with a fallback. `Field` is
+already `'static` in ark-ff, so no caller gains a bound.
+
+### How to attribute cost to a component
+
+There is no usable per-function profiler. `perf-metrics` on the CLI enables
+`function-span`, but nothing installs a `metrics` recorder — that is wired up in
+OpenVM's own benchmark harness, not in `cargo openvm`. Building the CLI with it
+only gets you a mandatory `GUEST_SYMBOLS_PATH` env var on every run.
+
+What works, and what produced the table above: call the component N times in the
+production guest, measure, subtract. Calibrate N against a host-side counter
+first (a `static AtomicUsize` in the function of interest) so you know what one
+call costs in units you care about, and keep a side effect at the end — a
+comparison that can panic — or the loop is optimized away.
 
 ### fq.rs had a dead gate for the whole OpenVM path
 
