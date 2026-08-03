@@ -1,6 +1,8 @@
 /target
 /tools/mkinput/target
 *.app.proof
-input.json
+*.stark.proof
 openvm/
 .DS_Store
+.out.tmp
+.tamper.tmp

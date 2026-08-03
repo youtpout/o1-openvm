@@ -368,6 +368,59 @@ An `app.pk` left over from a different OpenVM version fails as
 The message names neither the key nor the version, and the CLI is stripped so the
 backtrace is empty. `rm -rf openvm/app.pk openvm/app.vk` and re-keygen.
 
+## GPU proving (CUDA)
+
+Nothing in this repo changes for GPU. The guest ELF is byte-identical: `cuda` is
+a feature of the **host prover**, and it swaps each extension's CPU trace
+generator for its CUDA one. Every extension this guest uses has a GPU backend —
+`algebra` (the modular chip), `ecc` (Pallas/Vesta), `keccak256`, `riscv` — so no
+chip silently falls back to the CPU path.
+
+    ./scripts/gpu-setup.sh     # once per machine
+    make prove                 # keygen if stale, then prove app
+
+`scripts/gpu-setup.sh` installs rustup, `cargo-openvm` **built with
+`--features cuda`**, and the riscv64 guest toolchain. That install compiles the
+CUDA kernels, so budget 20–40 min; everything after it is fast.
+
+### What the machine needs
+
+- An NVIDIA driver (`nvidia-smi`) **and** the CUDA toolkit (`nvcc`). On vast.ai
+  that means picking a **`-devel`** image: the `-runtime` images carry the driver
+  but no toolkit, and the install then fails minutes into the kernel build.
+- Toolkit 12.9, 13.0 or 13.1. OpenVM's CI runs 12.9, so treat it as the target.
+- One GPU. The CLI is single-GPU only — renting a 4×GPU box buys nothing.
+
+### Feature map
+
+| feature | STARK proving | halo2 (EVM verifier) |
+|---|---|---|
+| `cuda` | GPU | CPU |
+| `halo2-gpu` | GPU | GPU |
+
+`halo2-gpu` implies `cuda` and only matters for `prove evm`, which is by far the
+most memory-hungry step (≥25 GB of GPU memory; use a 32 GB+ card). `prove app`
+and `prove stark` need much less.
+
+### Knobs when it OOMs on the device
+
+- `SEGMENT_MAX_MEMORY=…` (passed through by `scripts/prove.sh`) — smaller
+  segments, more of them.
+- `VPMM_PAGE_SIZE` / `VPMM_VA_SIZE` / `VPMM_PAGES` — the CUDA backend's virtual
+  memory pool (`crates/cuda-common/src/memory_manager/vm_pool.rs`).
+- `CUDA_ARCH=90` etc. at install time if auto-detection picks the wrong SM.
+
+### The verification protocol still applies
+
+A GPU proof is not evidence that the *guest* ran the accelerated paths — that is
+a compile-time property of the guest, checked the same way as on CPU
+(`strings` for `rayon`, then the digest). Run `make check` before trusting any
+GPU timing; `make golden` records the reference line on a known-good build.
+
+`make prove` re-runs keygen whenever `app.pk` is older than `openvm.toml` or than
+the `cargo-openvm` binary, which is the cheap guard against the version-mismatch
+panic described above.
+
 ## Cargo gotchas
 
 - **Never insert a `[target.'cfg(...)'.dependencies]` header mid-`[dependencies]`.**
