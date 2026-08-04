@@ -16,9 +16,6 @@ set -euo pipefail
 
 OPENVM_TAG=${OPENVM_TAG:-v2.1.0-preview}
 RUST_TOOLCHAIN=${RUST_TOOLCHAIN:-1.91.1}
-STAMP_DIR="${HOME}/.openvm"
-STAMP="${STAMP_DIR}/cli-features"
-
 log() { printf '\n\033[1;36m==> %s\033[0m\n' "$*"; }
 die() { printf '\n\033[1;31merror: %s\033[0m\n' "$*" >&2; exit 1; }
 
@@ -66,6 +63,11 @@ fi
 # shellcheck disable=SC1091
 [ -f "${HOME}/.cargo/env" ] && . "${HOME}/.cargo/env"
 rustup toolchain install "${RUST_TOOLCHAIN}" --profile minimal
+# The OpenVM guest toolchain is a *linked* toolchain: it ships rustc but no
+# cargo, and rustup's fallback for that case is nightly's cargo specifically.
+# Without nightly installed, `cargo openvm build` dies with
+# `'cargo' is not installed for the custom toolchain 'openvm-1.94.1'`.
+rustup toolchain install nightly --profile minimal
 
 # ------------------------------------------------------- cargo-openvm (CUDA)
 # `--features cuda` is the whole point: it swaps every extension's CPU trace
@@ -77,9 +79,6 @@ cargo "+${RUST_TOOLCHAIN}" install --locked --force \
   --tag "${OPENVM_TAG}" \
   --features cuda \
   cargo-openvm
-
-mkdir -p "${STAMP_DIR}"
-printf 'cuda\ntag=%s\n' "${OPENVM_TAG}" > "${STAMP}"
 
 # -------------------------------------------------- guest toolchain (riscv64)
 # Prebuilt riscv64im-unknown-openvm-elf from the openvm-org/rust fork. Downloads

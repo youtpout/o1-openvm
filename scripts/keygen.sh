@@ -10,6 +10,10 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
+# Same reason as in prove.sh: a shell started before gpu-setup.sh has no cargo.
+# shellcheck disable=SC1091
+[ -f "${HOME}/.cargo/env" ] && . "${HOME}/.cargo/env"
+
 NEED=0
 [ -f openvm/app.pk ] || NEED=1
 if [ -f openvm/app.pk ]; then

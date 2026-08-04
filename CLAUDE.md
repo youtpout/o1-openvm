@@ -383,6 +383,29 @@ chip silently falls back to the CPU path.
 `--features cuda`**, and the riscv64 guest toolchain. That install compiles the
 CUDA kernels, so budget 20–40 min; everything after it is fast.
 
+### Measured, RTX 5090 (32 GB), mainnet fixture
+
+| what | time |
+|---|---|
+| `prove app` | **5 min 01** |
+| `prove evm`, halo2 on CPU | 8 min 54 |
+| **`prove evm`, `halo2-gpu`** | **4 min 59** |
+| `verify evm` | 1.7 s |
+| `setup --evm` (once per machine) | 2 min 42 |
+
+Read the third row twice: **the full Ethereum-verifiable proof costs the same as
+the app proof alone.** Aggregation, root and halo2 are effectively free once
+everything is on the GPU — but only then. With halo2 on CPU the same chain is
+×1.8 slower, and that gap is *larger* than the app proof itself, so
+`--features halo2-gpu` is not a micro-optimisation here.
+
+The EVM proof is 3.9 KB and verifies for 336,146 gas.
+
+For scale: the SP1 port, same fixture, same input bytes, same GPU, is 32 min 01
+for a core proof and 40 min 39 for Groth16 (with gnark on GPU via ICICLE). That
+is ×8.2 on the on-chain path, and the whole of it comes from the guest — 440 M
+instructions against 4.38 G cycles — not from the prover.
+
 ### What the machine needs
 
 - An NVIDIA driver (`nvidia-smi`) **and** the CUDA toolkit (`nvcc`). On vast.ai
@@ -420,6 +443,46 @@ GPU timing; `make golden` records the reference line on a known-good build.
 `make prove` re-runs keygen whenever `app.pk` is older than `openvm.toml` or than
 the `cargo-openvm` binary, which is the cheap guard against the version-mismatch
 panic described above.
+
+### `setup --evm --download` is broken on this tag
+
+It fetches `s3://openvm-public-artifacts-us-east-1/v{CARGO_PKG_VERSION}/halo2.pk`,
+and `v2.1.0-preview` **left `CARGO_PKG_VERSION` at 2.0.0** — so a 2.1 build
+downloads the 2.0.0 halo2 key and verifier and pairs them with a root key it
+generated itself. `prove evm` then dies at
+`snark-verifier-sdk/src/halo2.rs: SNARK proof failed to verify`, after five
+minutes, naming neither artifact.
+
+Generate them instead — it is only 2 min 42, and needs **solc 0.8.19 exactly**
+(the verifier's pragma is pinned; 0.8.28 fails with "Source file requires
+different compiler version" *after* the key is built):
+
+    curl -sL -o /usr/local/bin/solc \
+      https://github.com/ethereum/solidity/releases/download/v0.8.19/solc-static-linux
+    chmod +x /usr/local/bin/solc
+    cargo openvm setup --evm --force      # no --download
+    cargo openvm keygen
+    cargo openvm prove evm --input input.json
+    cargo openvm verify evm
+
+The contracts land in `~/.openvm/halo2/src/v2.0-base/`. A copy of what this
+produced, plus the EVM proof and the run logs, is in `artifacts/evm-run/`.
+
+### Building the guest where you cannot prove it
+
+The prebuilt OpenVM rustc needs GLIBC 2.39 / GLIBCXX 3.4.32 — it is built on
+Ubuntu 24.04, and the fork ships one tarball per host triple with no
+older-glibc variant. On a 22.04 box the guest **cannot be built**, while proving
+works fine (it is a plain CPU/GPU binary). The `.vmexe` is portable bytecode, so:
+
+    make vmexe                                   # on macOS or any 24.04+ box
+    scp openvm/release/*.vmexe box:~/
+    make prove EXE=~/o1-openvm-verifier.vmexe    # on the GPU box
+
+Also: rustup's fallback for a *linked* toolchain missing `cargo` is nightly's
+cargo, specifically. Without a nightly installed, `cargo openvm build` fails with
+`'cargo' is not installed for the custom toolchain 'openvm-1.94.1'`.
+`scripts/gpu-setup.sh` installs nightly for this reason alone.
 
 ## Cargo gotchas
 

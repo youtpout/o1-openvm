@@ -8,13 +8,18 @@ INPUT       ?= input.json
 PROOF       ?= o1-openvm-verifier.app.proof
 GOLDEN      ?= expected-output.txt
 
-.PHONY: help setup keygen build run meter segment prove prove-stark \
+# A shell opened before `make setup` never re-reads its rc file, so cargo is not
+# on its PATH. Cheaper than telling everyone to source ~/.cargo/env.
+export PATH := $(HOME)/.cargo/bin:$(PATH)
+
+.PHONY: help setup keygen build vmexe run meter segment prove prove-stark \
         golden check tamper-acc tamper-stmt tamper clean-keys
 
 help:
 	@echo "setup        bootstrap a Linux+NVIDIA box (vast.ai) for GPU proving"
 	@echo "keygen       regenerate openvm/app.pk if stale"
 	@echo "build        build the guest ELF"
+	@echo "vmexe        build + transpile only, for copying to a prover box"
 	@echo "run          execute the guest on \$$INPUT (no proof)"
 	@echo "meter        execute + report instructions and trace cells"
 	@echo "segment      execute + report the segment count (proving shape)"
@@ -34,6 +39,15 @@ keygen:
 build:
 	cargo openvm build
 
+# Build + transpile only, then name the artifact to copy to a prover box.
+# The OpenVM rustc is built on Ubuntu 24.04 and the fork ships one tarball per
+# host triple, so it will not run on an older glibc (22.04 = 2.35, the toolchain
+# wants 2.39). Proving has no such constraint: build here, prove there.
+#   make vmexe && scp openvm/release/*.vmexe box:~/
+#   ssh box 'cd o1-openvm && make prove EXE=~/o1-openvm-verifier.vmexe'
+vmexe: build
+	@ls -lh openvm/release/*.vmexe
+
 run:
 	cargo openvm run --input $(INPUT)
 
@@ -44,8 +58,8 @@ meter: keygen
 segment: keygen
 	cargo openvm run --mode segment --input $(INPUT)
 
-prove:
-	./scripts/prove.sh $(INPUT)
+prove:  # EXE=... to prove a vmexe built elsewhere
+	EXE="$(EXE)" ./scripts/prove.sh $(INPUT)
 
 prove-stark: keygen
 	cargo openvm prove stark --input $(INPUT)

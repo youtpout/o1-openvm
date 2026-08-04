@@ -1,0 +1,78 @@
++ export PATH=/root/.cargo/bin:/usr/local/cuda-12.9/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
++ PATH=/root/.cargo/bin:/usr/local/cuda-12.9/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
++ export LD_LIBRARY_PATH=/usr/local/cuda-12.9/lib64
++ LD_LIBRARY_PATH=/usr/local/cuda-12.9/lib64
++ cd /root/o1-openvm
+++ date -u +%H:%M:%S
++ echo '### 0-solc-0.8.19 @ 12:58:05'
+### 0-solc-0.8.19 @ 12:58:05
++ curl -sL -o /usr/local/bin/solc https://github.com/ethereum/solidity/releases/download/v0.8.19/solc-static-linux
++ chmod +x /usr/local/bin/solc
++ solc --version
++ tail -1
+Version: 0.8.19+commit.7dd6d404.Linux.g++
+++ date -u +%H:%M:%S
++ echo '### 1-setup-evm-local @ 12:58:07'
+### 1-setup-evm-local @ 12:58:07
++ cargo openvm setup --evm --force
+Writing internal-recursive proving key to /root/.openvm/internal_recursive.pk
+Writing internal-recursive verifying key to /root/.openvm/internal_recursive.vk
+Writing root proving key to /root/.openvm/root.pk
+Generating Halo2 proving key locally. Tip: use `--download` to download a pre-built key from S3 instead.
+Writing Halo2 proving key to /root/.openvm/halo2.pk
+Generating verifier contract locally. Tip: use `--download` to download pre-built artifacts from S3 instead.
+Writing verifier contract to /root/.openvm/halo2/
+
+real	2m42.179s
+user	7m58.793s
+sys	1m11.093s
+++ date -u +%H:%M:%S
++ echo '### 2-keygen @ 13:00:49'
+### 2-keygen @ 13:00:49
++ rm -f openvm/app.pk openvm/app.vk
++ cargo openvm keygen
+Successfully generated app pk/vk and agg_prefix pk in /root/o1-openvm/openvm
+
+real	0m2.057s
+user	0m0.439s
+sys	0m1.713s
+++ date -u +%H:%M:%S
++ echo '### 3-prove-evm @ 13:00:51'
+### 3-prove-evm @ 13:00:51
++ cargo openvm prove evm --exe /root/o1-openvm/o1-openvm-verifier.vmexe --input input.json
+Generating EVM proof, this may take a lot of compute and memory...
+exe commit: 0x001f82fc317d173de27197cd34229cda546cd50400b99c29501904019fb7032d
+EVM proof completed! Writing EVM proof to o1-openvm-verifier.evm.proof
+
+real	8m54.440s
+user	37m29.308s
+sys	2m51.497s
+++ date -u +%H:%M:%S
++ echo '### 4-verify-evm @ 13:09:45'
+### 4-verify-evm @ 13:09:45
++ cargo openvm verify evm
+Verifying EVM proof at /root/o1-openvm/o1-openvm-verifier.evm.proof
+[/root/.cargo/git/checkouts/snark-verifier-5cc55660aeae13f6/369f98f/snark-verifier-sdk/src/evm.rs:202:5] gas_cost = 337262
+Proof verified successfully!
+
+real	0m1.689s
+user	0m0.056s
+sys	0m1.633s
+++ date -u +%H:%M:%S
++ echo '### DONE @ 13:09:47'
+### DONE @ 13:09:47
++ ls -lh o1-openvm-verifier.evm.proof
+-rw-r--r-- 1 root root 3.9K Aug  3 13:09 o1-openvm-verifier.evm.proof
++ head -20
++ ls -R /root/.openvm/halo2/src
+/root/.openvm/halo2/src:
+v2.0-base
+
+/root/.openvm/halo2/src/v2.0-base:
+Halo2Verifier.sol
+OpenVmHalo2Verifier.sol
+interfaces
+verifier.bytecode.json
+
+/root/.openvm/halo2/src/v2.0-base/interfaces:
+IOpenVmHalo2Verifier.sol

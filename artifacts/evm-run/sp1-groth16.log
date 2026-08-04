@@ -1,0 +1,79 @@
++ export PATH=/root/.cargo/bin:/root/.sp1/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
++ PATH=/root/.cargo/bin:/root/.sp1/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
++ pgrep -f '[e]vm-chain.sh'
++ sleep 30
++ pgrep -f '[e]vm-chain.sh'
++ sleep 30
++ pgrep -f '[e]vm-chain.sh'
++ sleep 30
++ pgrep -f '[e]vm-chain.sh'
++ sleep 30
++ pgrep -f '[e]vm-chain.sh'
++ sleep 30
++ pgrep -f '[e]vm-chain.sh'
++ sleep 30
++ pgrep -f '[e]vm-chain.sh'
++ sleep 30
++ pgrep -f '[e]vm-chain.sh'
++ sleep 30
++ pgrep -f '[e]vm-chain.sh'
++ sleep 30
++ pgrep -f '[e]vm-chain.sh'
++ sleep 30
++ pgrep -f '[e]vm-chain.sh'
++ sleep 30
++ pgrep -f '[e]vm-chain.sh'
++ sleep 30
++ pgrep -f '[e]vm-chain.sh'
++ sleep 30
++ pgrep -f '[e]vm-chain.sh'
++ sleep 30
++ pgrep -f '[e]vm-chain.sh'
++ sleep 30
++ pgrep -f '[e]vm-chain.sh'
++ sleep 30
++ pgrep -f '[e]vm-chain.sh'
++ cd /root/o1js-to-zkvm
+++ date -u +%H:%M:%S
++ echo '### sp1-groth16 START 11:45:14'
+### sp1-groth16 START 11:45:14
++ SP1_PROOF_MODE=groth16
++ make prove-cuda
+SP1_PROVER=cuda ./scripts/rust-prove.sh
+==> Fixture: /root/o1js-to-zkvm/fixtures/mainnet-blockchain-snark
+==> SP1_PROVER=cuda
+==> Building o1zkvm...
+make[1]: Entering directory '/root/o1js-to-zkvm'
+cargo build --release -p o1-verifier-host 
+   Compiling sp1-prover-types v6.2.2 (https://github.com/succinctlabs/sp1?tag=v6.2.2#150e6294)
+warning: o1-verifier-host@0.1.0: rustc +succinct --version: "rustc 1.94.0-dev\n"
+warning: o1-verifier-host@0.1.0: o1-verifier built at 2026-08-03 10:44:05
+   Compiling sp1-prover v6.2.2 (https://github.com/succinctlabs/sp1?tag=v6.2.2#150e6294)
+   Compiling sp1-cuda v6.2.2 (https://github.com/succinctlabs/sp1?tag=v6.2.2#150e6294)
+   Compiling sp1-sdk v6.2.2 (https://github.com/succinctlabs/sp1?tag=v6.2.2#150e6294)
+   Compiling o1-verifier-host v0.1.0 (/root/o1js-to-zkvm/crates/o1-verifier-host)
+    Finished `release` profile [optimized] target(s) in 1m 21s
+make[1]: Leaving directory '/root/o1js-to-zkvm'
+==> Starting sp1-gpu-server (device 0)...
+==> sp1-gpu-server ready (PID 300193)
+==> Generating real SP1 proof (cuda)...
+[2m2026-08-03T11:46:38.656727Z[0m [32m INFO[0m initializing cuda prover
+Running sp1-gpu-server 6.2.2 with device 0
+[2m2026-08-03T11:46:38.839884Z[0m [32m INFO[0m [2msp1_gpu_server::server[0m[2m:[0m Server listening @ /tmp/sp1-cuda-0.sock
+[2m2026-08-03T11:46:52.519872Z[0m [32m INFO[0m starting proof generation [3mmode[0m[2m=[0mGroth16
+Pickles proof verified successfully inside SP1 zkVM!
+
+==> Attestation
+    vk_hash (o1js verificationKey.hash): 0x0607c216baae19480decfb5bacd8f96b13a15f14cd237ba28548bb924df6bdca
+    statement (1 field(s)):
+      [0] 0x11d6043093b2026da3bf34c38d12ca6c97658e55b470cee2e3d46f8374c27501
+
+SP1 proof generated and verified.
+==> SP1 proof generation succeeded.
+
+real	46m27.758s
+user	204m28.833s
+sys	68m26.753s
+++ date -u +%H:%M:%S
++ echo '### sp1-groth16 END 12:31:42'
+### sp1-groth16 END 12:31:42
